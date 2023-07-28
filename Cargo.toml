@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 gloo-console = "0.2.3"
 gloo-net = "0.3.0"
+gloo-storage = "0.2.2"
 serde = "1.0.171"
 serde_json = "1.0.103"
 web-sys = { version = "0.3.64", features = ["HtmlInputElement"] }
