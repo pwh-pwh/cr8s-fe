@@ -1,32 +1,19 @@
+use crate::components::header::Header;
 use crate::components::sidebar::Sidebar;
-use crate::contexts::CurrentUserContext;
-use crate::Route;
-use yew::{function_component, html, use_context, Html, Properties};
-use yew_router::prelude::*;
-
+use yew::{function_component, html, Html, Properties};
 #[function_component]
 pub fn Home() -> Html {
-    let current_user_ctx =
-        use_context::<CurrentUserContext>().expect("current user context is missing");
-    match &current_user_ctx.user {
-        Some(user) => {
-            html! {
-                <div class="container">
-                    <div class="row">
-                        <div class="col">
-                            <Sidebar />
-                        </div>
-                        <div class="col">
-                            {"Welcome user "}{user.username.clone()}
-                        </div>
-                    </div>
+    html! {
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <Sidebar />
                 </div>
-            }
-        }
-        None => {
-            html! {
-                <Redirect<Route> to={Route::Login}/>
-            }
-        }
+                <div class="col mt-3">
+                    <Header />
+                    {"Have a great day"}
+                </div>
+            </div>
+        </div>
     }
 }

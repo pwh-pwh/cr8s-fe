@@ -1,6 +1,5 @@
 use crate::api::user::{api_me, LoginResponse, MeResponse, User};
 use gloo_storage::{SessionStorage, Storage};
-use std::clone;
 use std::rc::Rc;
 use yew::platform::spawn_local;
 use yew::{
@@ -31,11 +30,14 @@ impl Reducible for CurrentUser {
                 }
                 .into()
             }
-            CurrentUserActions::LoginFail => Self {
-                user: None,
-                token: None,
+            CurrentUserActions::LoginFail => {
+                SessionStorage::delete("cr8s_token");
+                Self {
+                    user: None,
+                    token: None,
+                }
+                .into()
             }
-            .into(),
         }
     }
 }
