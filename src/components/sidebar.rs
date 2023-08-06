@@ -1,5 +1,5 @@
 use crate::Route;
-use yew::{classes, function_component, html, Html, Properties};
+use yew::{classes, function_component, html, Html};
 use yew_router::prelude::*;
 
 #[function_component(Sidebar)]

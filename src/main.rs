@@ -2,6 +2,8 @@ use crate::contexts::CurrentUserProvider;
 use pages::home::Home;
 use pages::login::Login;
 use pages::not_found::NotFound;
+use pages::rustaceans::add::RustaceansAdd;
+use pages::rustaceans::index::Rustaceans;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
@@ -9,9 +11,10 @@ mod api;
 mod components;
 mod contexts;
 mod pages;
+mod utils;
 
 #[derive(Routable, PartialEq, Clone)]
-enum Route {
+pub enum Route {
     #[at("/home")]
     Home,
     #[at("/crates")]
@@ -23,6 +26,8 @@ enum Route {
     NotFound,
     #[at("/rustaceans")]
     Rustaceans,
+    #[at("/rustaceans/add")]
+    RustaceansAdd,
 }
 
 #[function_component(App)]
@@ -48,6 +53,12 @@ fn switch(routes: Route) -> Html {
         },
         Route::NotFound => html! {
             <NotFound />
+        },
+        Route::Rustaceans => html! {
+            <Rustaceans />
+        },
+        Route::RustaceansAdd => html! {
+            <RustaceansAdd />
         },
         _ => html! {
             <Home />
