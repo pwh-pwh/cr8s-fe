@@ -5,7 +5,7 @@ use serde::Deserialize;
 use serde_json::json;
 use std::fmt::format;
 
-#[derive(Deserialize,Clone)]
+#[derive(Deserialize, Clone, PartialEq)]
 pub struct Rustacean {
     pub id: i32,
     pub name: String,

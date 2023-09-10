@@ -19,3 +19,9 @@ pub fn iso_8601_to_default_date_format(date: &str) -> String {
     let date = Utc.datetime_from_str(date, ISO_8601DATE_FORMAT).unwrap();
     date.format(DEFAULT_DATE_FORMAT).to_string()
 }
+
+//input format str resp resp
+pub fn format_date(date: &str, format: &str) -> String {
+    let date = Utc.datetime_from_str(date, format).unwrap();
+    date.format(DEFAULT_DATE_FORMAT).to_string()
+}
