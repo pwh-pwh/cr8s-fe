@@ -1,20 +1,17 @@
-use crate::api::rustaceans::api_rustaceans;
-use crate::contexts::CurrentUserContext;
 use crate::hooks::use_rustaceans;
 use crate::utils::time_utils::iso_8601_to_default_date_format;
 use crate::Route;
-use yew::platform::spawn_local;
-use yew::{
-    function_component, html, use_context, use_state, use_state_eq, Html, HtmlResult, Properties,
-};
+use yew::{function_component, html, AttrValue, Html, HtmlResult, Properties};
 use yew_router::prelude::*;
 
+#[derive(Properties, PartialEq)]
+pub struct Props {
+    pub token: AttrValue,
+}
+
 #[function_component(RustaceanList)]
-pub fn rustacean_list() -> HtmlResult {
-    let current_user_ctx =
-        use_context::<CurrentUserContext>().expect("No current user context found");
-    let token = current_user_ctx.token.as_ref().expect("");
-    let rustaceans = use_rustaceans(token)?;
+pub fn rustacean_list(props: &Props) -> HtmlResult {
+    let rustaceans = use_rustaceans(&props.token)?;
 
     Ok(html! {
         <>
@@ -44,12 +41,13 @@ pub fn rustacean_list() -> HtmlResult {
                         <td>{rustacean.email}</td>
                         <td>{iso_8601_to_default_date_format(&rustacean.created_at)}</td>
                         <td>
-                            <Link<Route> to={Route::RustaceansAdd}>
+                            <Link<Route> to={Route::RustaceansEdit {id: rustacean.id}} classes="link-secondary">
                                 <button class="btn btn-primary">
                                     {"Edit"}
                                 </button>
                             </Link<Route>>
-                            <Link<Route> to={Route::RustaceansAdd}>
+                            <span class="mx-1">{"/"}</span>
+                            <Link<Route> to={Route::RustaceansAdd} classes="link-danger">
                                 <button class="btn btn-danger">
                                     {"Delete"}
                                 </button>

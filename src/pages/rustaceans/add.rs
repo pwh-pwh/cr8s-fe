@@ -1,6 +1,5 @@
 use crate::components::header::Header;
 use crate::components::rustacean_form::RustaceanForm;
-use crate::components::rustacean_list::RustaceanList;
 use crate::components::sidebar::Sidebar;
 use yew::{function_component, html, Html};
 

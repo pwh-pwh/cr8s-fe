@@ -1,4 +1,4 @@
-use crate::api::rustaceans::api_rustacean_create;
+use crate::api::rustaceans::{api_rustacean_create, api_rustacean_update, Rustacean};
 use crate::components::alert::Alert;
 use crate::components::input::Input;
 use crate::contexts::CurrentUserContext;
@@ -6,12 +6,21 @@ use crate::Route;
 use gloo_console::log;
 use web_sys::{Event, HtmlInputElement, SubmitEvent};
 use yew::platform::spawn_local;
-use yew::{function_component, html, use_context, use_state, Callback, Html, TargetCast};
+use yew::{
+    function_component, html, use_context, use_state, Callback, Html, Properties, TargetCast,
+};
 use yew_router::prelude::use_navigator;
 
+#[derive(Properties, PartialEq)]
+pub struct Props {
+    pub rustacean: Option<Rustacean>,
+}
 #[function_component(RustaceanForm)]
-pub fn rustacean_form() -> Html {
-    let name_handler = use_state(String::default);
+pub fn rustacean_form(props: &Props) -> Html {
+    let name_handler = use_state(|| match &props.rustacean {
+        Some(r) => r.name.clone(),
+        None => String::default(),
+    });
     let name = (*name_handler).clone();
     let name_changed = move |e: Event| {
         let target = e.target_dyn_into::<HtmlInputElement>();
@@ -19,7 +28,10 @@ pub fn rustacean_form() -> Html {
             name_handler.set(input.value());
         }
     };
-    let email_handler = use_state(String::default);
+    let email_handler = use_state(|| match &props.rustacean {
+        Some(r) => r.email.clone(),
+        None => String::default(),
+    });
     let email = (*email_handler).clone();
     let email_changed = move |e: Event| {
         if let Some(input) = e.target_dyn_into::<HtmlInputElement>() {
@@ -33,10 +45,12 @@ pub fn rustacean_form() -> Html {
     let onsubmit = {
         let name = name.clone();
         let email = email.clone();
+        let cloned_rustacean = props.rustacean.clone();
         Callback::from(move |e: SubmitEvent| {
             e.prevent_default();
             let name = name.clone();
             let email = email.clone();
+            let cloned_rustacean = cloned_rustacean.clone();
             let current_user_ctx = current_user_ctx.clone();
             let error_message_handler = error_message_handler.clone();
             let navigator = navigator.clone();
@@ -44,14 +58,27 @@ pub fn rustacean_form() -> Html {
                 Some(token) => {
                     let token = token.clone();
                     spawn_local(async move {
-                        match api_rustacean_create(&token, name, email).await {
-                            Ok(resp) => {
-                                log!("resp:", resp.id, " ,name:", resp.name);
-                                navigator.push(&Route::Rustaceans)
+                        if let Some(rustacean) = cloned_rustacean {
+                            match api_rustacean_update(&token, name, email, rustacean.id).await {
+                                Ok(resp) => {
+                                    log!("resp:", resp.id, " ,name:", resp.name);
+                                    navigator.push(&Route::Rustaceans)
+                                }
+                                Err(_) => {
+                                    error_message_handler
+                                        .set("session has expired.please login again".to_string());
+                                }
                             }
-                            Err(_) => {
-                                error_message_handler
-                                    .set("session has expired.please login again".to_string());
+                        } else {
+                            match api_rustacean_create(&token, name, email).await {
+                                Ok(resp) => {
+                                    log!("resp:", resp.id, " ,name:", resp.name);
+                                    navigator.push(&Route::Rustaceans)
+                                }
+                                Err(_) => {
+                                    error_message_handler
+                                        .set("session has expired.please login again".to_string());
+                                }
                             }
                         }
                     });
