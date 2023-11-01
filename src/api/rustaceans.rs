@@ -59,3 +59,14 @@ pub async fn api_rustacean_update(
         .await?;
     response.json::<Rustacean>().await
 }
+
+pub async fn api_rustacean_delete(
+    token:&String,
+    id:i32
+) ->Result<(),gloo_net::Error> {
+    let _ = Request::delete(&format!("{}/rustaceans/{}", APP_HOST, id))
+        .header("Authorization", &format!("Bearer {}", token))
+        .send()
+        .await?;
+    Ok(())
+}

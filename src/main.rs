@@ -4,6 +4,7 @@ use pages::login::Login;
 use pages::not_found::NotFound;
 use pages::rustaceans::add::*;
 use pages::rustaceans::edit::*;
+use pages::rustaceans::delete::*;
 use pages::rustaceans::index::Rustaceans;
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -32,6 +33,8 @@ pub enum Route {
     RustaceansAdd,
     #[at("/rustaceans/:id/edit")]
     RustaceansEdit { id: i32 },
+    #[at("/rustaceans/:id/delete")]
+    RustaceansDelete { id: i32 },
 }
 
 #[function_component(App)]
@@ -66,6 +69,9 @@ fn switch(routes: Route) -> Html {
         },
         Route::RustaceansEdit { id } => html! {
             <RustaceansEdit rustacean_id={id} />
+        },
+        Route::RustaceansDelete { id } => html! {
+            <RustaceansDelete rustacean_id={id} />
         },
         _ => html! {
             <Home />
