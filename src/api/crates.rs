@@ -1,10 +1,10 @@
-use std::process::id;
 use crate::api::rustaceans::Rustacean;
 use crate::api::APP_HOST;
 use crate::pages::crates::index::Crates;
 use gloo_net::http::Request;
 use serde::Deserialize;
 use serde_json::json;
+use std::process::id;
 
 #[derive(Deserialize, Clone, PartialEq)]
 pub struct Crate {
@@ -29,7 +29,8 @@ pub async fn api_crate_create(
     token: &String,
     name: String,
     code: String,
-    version:String,
+    version: String,
+    rustacean_id: i32,
 ) -> Result<Crate, gloo_net::Error> {
     let response = Request::post(&format!("{}/crates", APP_HOST))
         .header("Authorization", &format!("Bearer {}", token))
@@ -37,6 +38,7 @@ pub async fn api_crate_create(
             "name":name,
             "code":code,
             "version":version,
+            "rustacean_id":rustacean_id,
         }))?
         .send()
         .await?;
@@ -47,7 +49,7 @@ pub async fn api_crate_update(
     token: &String,
     name: String,
     code: String,
-    version:String,
+    version: String,
     id: i32,
 ) -> Result<Crate, gloo_net::Error> {
     let response = Request::put(&format!("{}/crates/{}", APP_HOST, id))

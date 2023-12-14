@@ -1,19 +1,23 @@
 use crate::api::crates::{api_crate_create, api_crate_update, Crate};
+use crate::api::rustaceans::Rustacean;
 use crate::components::alert::Alert;
 use crate::components::input::Input;
+use crate::components::select::Select;
 use crate::contexts::CurrentUserContext;
 use crate::Route;
 use gloo_console::log;
-use web_sys::{Event, HtmlInputElement, SubmitEvent};
+use web_sys::{Event, HtmlInputElement, HtmlSelectElement, SubmitEvent};
 use yew::platform::spawn_local;
 use yew::{
-    function_component, html, use_context, use_state, Callback, Html, Properties, TargetCast,
+    function_component, html, props, use_context, use_state, AttrValue, Callback, Html, Properties,
+    TargetCast,
 };
 use yew_router::prelude::use_navigator;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub a_crate: Option<Crate>,
+    pub authors: Vec<Rustacean>,
 }
 #[function_component(CrateForm)]
 pub fn crate_form(props: &Props) -> Html {
@@ -39,6 +43,17 @@ pub fn crate_form(props: &Props) -> Html {
         }
     };
 
+    let rustacean_id_handler = use_state(|| match &props.a_crate {
+        Some(r) => r.rustacean_id.to_string(),
+        None => String::default(),
+    });
+    let rustacean_id = (*rustacean_id_handler).clone();
+    let rustacean_id_changed = move |e: Event| {
+        if let Some(input) = e.target_dyn_into::<HtmlSelectElement>() {
+            rustacean_id_handler.set(input.value());
+        }
+    };
+
     let version_handler = use_state(|| match &props.a_crate {
         Some(r) => r.version.clone(),
         None => String::default(),
@@ -58,11 +73,13 @@ pub fn crate_form(props: &Props) -> Html {
         let name = name.clone();
         let code = code.clone();
         let version = version.clone();
+        let rustacean_id = rustacean_id.clone();
         let cloned_crate = props.a_crate.clone();
         Callback::from(move |e: SubmitEvent| {
             e.prevent_default();
             let name = name.clone();
             let code = code.clone();
+            let rustacean_id = rustacean_id.clone();
             let version = version.clone();
             let cloned_crate = cloned_crate.clone();
             let current_user_ctx = current_user_ctx.clone();
@@ -85,7 +102,15 @@ pub fn crate_form(props: &Props) -> Html {
                                 }
                             }
                         } else {
-                            match api_crate_create(&token, name, code, version).await {
+                            match api_crate_create(
+                                &token,
+                                name,
+                                code,
+                                version,
+                                rustacean_id.parse().unwrap(),
+                            )
+                            .await
+                            {
                                 Ok(resp) => {
                                     log!("resp:", resp.id, " ,name:", resp.name);
                                     navigator.push(&Route::Crates)
@@ -102,6 +127,16 @@ pub fn crate_form(props: &Props) -> Html {
             }
         })
     };
+    let options = props
+        .authors
+        .iter()
+        .map(|a| {
+            (
+                AttrValue::from(a.id.to_string()),
+                AttrValue::from(a.name.clone()),
+            )
+        })
+        .collect::<Vec<(AttrValue, AttrValue)>>();
     html! {
         <form onsubmit={onsubmit}>
             if error_message.len() != 0 {
@@ -129,6 +164,14 @@ pub fn crate_form(props: &Props) -> Html {
                         value={version}
                         onchange={version_changed}
                         label="Version"/>
+                    </div>
+                    <div class="mb-3">
+                        <Select name="author"
+                                label="Author"
+                                value={rustacean_id}
+                                onchange={rustacean_id_changed}
+                                options={options}
+                        />
                     </div>
 
                     <button type="submit" class="btn btn-primary">{"Save"}</button>
