@@ -77,3 +77,14 @@ pub async fn api_crate_show(token: &String, id: i32) -> Result<Crate, gloo_net::
         .await?;
     response.json::<Crate>().await
 }
+
+pub async fn api_crate_delete(
+    token:&String,
+    id:i32
+) ->Result<(),gloo_net::Error> {
+    let _ = Request::delete(&format!("{}/crates/{}", APP_HOST, id))
+        .header("Authorization", &format!("Bearer {}", token))
+        .send()
+        .await?;
+    Ok(())
+}

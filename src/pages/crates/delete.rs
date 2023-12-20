@@ -1,26 +1,27 @@
-use crate::api::rustaceans::api_rustacean_delete;
+use crate::api::crates::api_crate_delete;
 use crate::components::alert::Alert;
+use crate::components::crate_form::CrateForm;
 use crate::components::header::Header;
-use crate::components::rustacean_form::RustaceanForm;
 use crate::components::sidebar::Sidebar;
 use crate::contexts::CurrentUserContext;
-use crate::hooks::use_rustacean;
+use crate::hooks::{use_crate, use_rustacean, use_rustaceans};
 use crate::Route;
 use serde_json::de::Read;
 use web_sys::MouseEvent;
 use yew::platform::spawn_local;
 use yew::{
-    function_component, html, use_context, use_state, AttrValue, Html, HtmlResult, Properties,
+    function_component, html, props, use_context, use_state, AttrValue, Html, HtmlResult,
+    Properties,
 };
 use yew_router::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
-    pub rustacean_id: i32,
+    pub crate_id: i32,
 }
 
-#[function_component(RustaceansDelete)]
-pub fn rustaceans_delete(props: &Props) -> Html {
+#[function_component(CratesDelete)]
+pub fn crates_delete(props: &Props) -> Html {
     let current_user = use_context::<CurrentUserContext>().expect("not found current user");
     let navigator = use_navigator().unwrap();
     let error_msg_hander = use_state(String::default);
@@ -28,15 +29,15 @@ pub fn rustaceans_delete(props: &Props) -> Html {
     match &current_user.token {
         Some(token) => {
             let cloned_token = token.to_owned();
-            let id = props.rustacean_id;
+            let id = props.crate_id;
             let onclick = move |e: MouseEvent| {
                 e.prevent_default();
                 let navigator = navigator.clone();
                 let error_msg_hander = error_msg_hander.clone();
                 let cloned_token = cloned_token.clone();
                 spawn_local(async move {
-                    match api_rustacean_delete(&cloned_token, id).await {
-                        Ok(()) => navigator.push(&Route::Rustaceans),
+                    match api_crate_delete(&cloned_token, id).await {
+                        Ok(()) => navigator.push(&Route::Crates),
                         Err(e) => error_msg_hander.set(e.to_string()),
                     }
                 })
@@ -55,8 +56,8 @@ pub fn rustaceans_delete(props: &Props) -> Html {
                         </div>
                     }
                             <p>
-                                {"are you sure you want to delete rustacean #"}
-                                {props.rustacean_id.clone()}
+                                {"are you sure you want to delete crate #"}
+                                {props.crate_id.clone()}
                             </p>
                             <button class="btn btn-danger" onclick={onclick}>{"Delete"}</button>
                         </div>
