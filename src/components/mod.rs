@@ -8,3 +8,4 @@ pub mod rustacean_form;
 pub mod rustacean_list;
 pub mod select;
 pub mod sidebar;
+pub mod textarea;

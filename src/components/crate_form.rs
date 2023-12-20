@@ -3,10 +3,11 @@ use crate::api::rustaceans::Rustacean;
 use crate::components::alert::Alert;
 use crate::components::input::Input;
 use crate::components::select::Select;
+use crate::components::textarea::Textarea;
 use crate::contexts::CurrentUserContext;
 use crate::Route;
 use gloo_console::log;
-use web_sys::{Event, HtmlInputElement, HtmlSelectElement, SubmitEvent};
+use web_sys::{Event, HtmlInputElement, HtmlSelectElement, HtmlTextAreaElement, SubmitEvent};
 use yew::platform::spawn_local;
 use yew::{
     function_component, html, props, use_context, use_state, AttrValue, Callback, Html, Properties,
@@ -65,6 +66,23 @@ pub fn crate_form(props: &Props) -> Html {
         }
     };
 
+    let description_handler = use_state(|| match &props.a_crate {
+        Some(r) => {
+            if let Some(d) = &r.description {
+                d.clone()
+            } else {
+                String::default()
+            }
+        }
+        None => String::default(),
+    });
+    let description = (*description_handler).clone();
+    let description_changed = move |e: Event| {
+        if let Some(input) = e.target_dyn_into::<HtmlTextAreaElement>() {
+            description_handler.set(input.value());
+        }
+    };
+
     let error_message_handler = use_state(String::default);
     let error_message = (*error_message_handler).clone();
     let current_user_ctx = use_context::<CurrentUserContext>().expect("not found ctx");
@@ -75,12 +93,14 @@ pub fn crate_form(props: &Props) -> Html {
         let version = version.clone();
         let rustacean_id = rustacean_id.clone();
         let cloned_crate = props.a_crate.clone();
+        let description = description.clone();
         Callback::from(move |e: SubmitEvent| {
             e.prevent_default();
             let name = name.clone();
             let code = code.clone();
             let rustacean_id = rustacean_id.clone();
             let version = version.clone();
+            let description = description.clone();
             let cloned_crate = cloned_crate.clone();
             let current_user_ctx = current_user_ctx.clone();
             let error_message_handler = error_message_handler.clone();
@@ -90,7 +110,15 @@ pub fn crate_form(props: &Props) -> Html {
                     let token = token.clone();
                     spawn_local(async move {
                         if let Some(rustacean) = cloned_crate {
-                            match api_crate_update(&token, name, code, version, rustacean.id).await
+                            match api_crate_update(
+                                &token,
+                                name,
+                                code,
+                                version,
+                                description,
+                                rustacean.id,
+                            )
+                            .await
                             {
                                 Ok(resp) => {
                                     log!("resp:", resp.id, " ,name:", resp.name);
@@ -107,6 +135,7 @@ pub fn crate_form(props: &Props) -> Html {
                                 name,
                                 code,
                                 version,
+                                description,
                                 rustacean_id.parse().unwrap(),
                             )
                             .await
@@ -173,7 +202,13 @@ pub fn crate_form(props: &Props) -> Html {
                                 options={options}
                         />
                     </div>
-
+                    <div class="mb-3">
+                        <Textarea name="description"
+                                label="Description"
+                                value={description}
+                                onchange={description_changed}
+                        />
+                    </div>
                     <button type="submit" class="btn btn-primary">{"Save"}</button>
         </form>
     }

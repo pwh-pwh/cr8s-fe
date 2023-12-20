@@ -30,6 +30,7 @@ pub async fn api_crate_create(
     name: String,
     code: String,
     version: String,
+    description: String,
     rustacean_id: i32,
 ) -> Result<Crate, gloo_net::Error> {
     let response = Request::post(&format!("{}/crates", APP_HOST))
@@ -39,6 +40,7 @@ pub async fn api_crate_create(
             "code":code,
             "version":version,
             "rustacean_id":rustacean_id,
+            "description":description
         }))?
         .send()
         .await?;
@@ -50,6 +52,7 @@ pub async fn api_crate_update(
     name: String,
     code: String,
     version: String,
+    description: String,
     id: i32,
 ) -> Result<Crate, gloo_net::Error> {
     let response = Request::put(&format!("{}/crates/{}", APP_HOST, id))
@@ -58,6 +61,7 @@ pub async fn api_crate_update(
             "name":name,
             "code":code,
             "version":version,
+            "description":description
         }))?
         .send()
         .await?;
