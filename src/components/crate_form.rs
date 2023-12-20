@@ -94,6 +94,8 @@ pub fn crate_form(props: &Props) -> Html {
         let rustacean_id = rustacean_id.clone();
         let cloned_crate = props.a_crate.clone();
         let description = description.clone();
+        log!("rustacean_id:", rustacean_id.clone());
+        //默认下拉选择框的值为空，如果提交则报错
         Callback::from(move |e: SubmitEvent| {
             e.prevent_default();
             let name = name.clone();
