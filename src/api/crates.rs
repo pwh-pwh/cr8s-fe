@@ -53,6 +53,7 @@ pub async fn api_crate_update(
     code: String,
     version: String,
     description: String,
+    rustacean_id: i32,
     id: i32,
 ) -> Result<Crate, gloo_net::Error> {
     let response = Request::put(&format!("{}/crates/{}", APP_HOST, id))
@@ -61,8 +62,17 @@ pub async fn api_crate_update(
             "name":name,
             "code":code,
             "version":version,
-            "description":description
+            "description":description,
+            "rustacean_id":rustacean_id
         }))?
+        .send()
+        .await?;
+    response.json::<Crate>().await
+}
+
+pub async fn api_crate_show(token: &String, id: i32) -> Result<Crate, gloo_net::Error> {
+    let response = Request::get(&format!("{}/crates/{}", APP_HOST, id))
+        .header("Authorization", &format!("Bearer {}", token))
         .send()
         .await?;
     response.json::<Crate>().await

@@ -1,4 +1,5 @@
 use crate::contexts::CurrentUserProvider;
+use crate::pages::crates::edit::CratesEdit;
 use pages::crates::add::*;
 use pages::crates::index::Crates;
 use pages::home::Home;
@@ -87,9 +88,10 @@ fn switch(routes: Route) -> Html {
         Route::CratesAdd => html! {
             <CratesAdd />
         },
-        /* Route::CratesEdit { id } => html! {
-            <Crates crate_id={id} />
+        Route::CratesEdit { id } => html! {
+            <CratesEdit crate_id={id} />
         },
+        /*
         Route::CratesDelete { id } => html! {
             <CratesDelete crate_id={id} />
         },*/

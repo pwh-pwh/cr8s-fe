@@ -109,14 +109,15 @@ pub fn crate_form(props: &Props) -> Html {
                 Some(token) => {
                     let token = token.clone();
                     spawn_local(async move {
-                        if let Some(rustacean) = cloned_crate {
+                        if let Some(a_crate) = cloned_crate {
                             match api_crate_update(
                                 &token,
                                 name,
                                 code,
                                 version,
                                 description,
-                                rustacean.id,
+                                rustacean_id.parse().unwrap(),
+                                a_crate.id,
                             )
                             .await
                             {
