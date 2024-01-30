@@ -36,7 +36,7 @@ pub enum Route {
     CratesDelete { id: i32 },
     #[at("/login")]
     Login,
-    #[not_found]
+    // #[not_found]
     #[at("/404")]
     NotFound,
     #[at("/rustaceans")]
