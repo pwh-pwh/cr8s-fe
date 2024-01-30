@@ -22,6 +22,8 @@ mod utils;
 
 #[derive(Routable, PartialEq, Clone)]
 pub enum Route {
+    #[at("/")]
+    Main,
     #[at("/home")]
     Home,
     #[at("/crates")]
@@ -62,6 +64,9 @@ fn app() -> Html {
 
 fn switch(routes: Route) -> Html {
     match routes {
+        Route::Main => html! {
+            <Home />
+        },
         Route::Login => html! {
             <Login />
         },
