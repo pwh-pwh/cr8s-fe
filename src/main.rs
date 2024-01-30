@@ -65,7 +65,7 @@ fn app() -> Html {
 fn switch(routes: Route) -> Html {
     match routes {
         Route::Main => html! {
-            <Home />
+            <Login />
         },
         Route::Login => html! {
             <Login />
