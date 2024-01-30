@@ -53,11 +53,11 @@ pub enum Route {
 fn app() -> Html {
     html! {
         <>
-            <HashRouter>
+            <BrowserRouter>
                 <CurrentUserProvider>
                     <Switch<Route> render={switch}/>
                 </CurrentUserProvider>
-            </HashRouter>
+            </BrowserRouter>
         </>
     }
 }
