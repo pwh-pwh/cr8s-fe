@@ -19,7 +19,7 @@ pub fn login() -> Html {
                     <div class="row min-vh-100 justify-content-center align-items-center">
                         <div class="col-md-4">
                             <p class="text-center">
-                            <img src="/img.png" alt="logo" />
+                            <img src="./img.png" alt="logo" />
                             </p>
                             <LoginForm />
                         </div>
