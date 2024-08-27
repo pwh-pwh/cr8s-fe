@@ -22,8 +22,6 @@ mod utils;
 
 #[derive(Routable, PartialEq, Clone)]
 pub enum Route {
-    #[at("/cr8s-fe")]
-    MainProd,
     #[at("/")]
     Main,
     #[at("/home")]
@@ -67,9 +65,6 @@ fn app() -> Html {
 fn switch(routes: Route) -> Html {
     match routes {
         Route::Main => html! {
-            <Login />
-        },
-        Route::MainProd => html! {
             <Login />
         },
         Route::Login => html! {
