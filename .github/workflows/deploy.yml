@@ -44,7 +44,7 @@ jobs:
         run: |
           mkdir -p ./src/assets/manga
       - name: Build the Rust WASM app and all of its assets
-        run: trunk build --public-url ${{ github.event.repository.name }} --release
+        run: trunk build --public-url /${{ github.event.repository.name }}/ --release
       - name: cp index.html to 404.html
         run: |
           cp ./dist/index.html ./dist/404.html
